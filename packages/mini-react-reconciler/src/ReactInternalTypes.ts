@@ -28,6 +28,7 @@ export type Fiber = {
   pendingState: any,
   memoizedState: any,
 
+  updateQueue: any
 
   /**
    * 父亲节点
@@ -68,7 +69,6 @@ type BaseFiberRootProperties = {
   containerInfo: any,
   pendingLanes: Lanes,
 };
-
 
 export type FiberRoot = {
   [key in keyof Fiber]: Fiber[key]

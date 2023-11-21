@@ -14,6 +14,27 @@ export function createFiber(
   return new (FiberNode as any)(tag, pendingProps, key);
 }
 
+export function createWorkInProgrss(current: Fiber) {
+  let workInProgress = createFiber(
+    current.tag,
+    null,
+    current.key
+  );
+  workInProgress.type = current.type;
+  workInProgress.stateNode = current.stateNode; // fiberRoot
+
+  workInProgress.memoizedProps = current.memoizedProps;
+  workInProgress.memoizedState = current.memoizedState;
+  workInProgress.updateQueue = current.updateQueue;
+
+  workInProgress.sibling = current.sibling;
+  workInProgress.child = current.child;
+  workInProgress.index = current.index;
+  workInProgress.flags = current.flags;
+
+  return workInProgress;
+}
+
 function FiberNode(
   this: any,
   tag: WorkTag,
@@ -26,6 +47,7 @@ function FiberNode(
   this.memoizedProps = null;
   this.pendingState = null;
   this.memoizedState = null;
+  this.updateQueue = null;
   this.return = null;
   this.sibling = null;
   this.child = null;

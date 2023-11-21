@@ -2,6 +2,7 @@ import { RootTag } from "./ReactWorkTag";
 import { FiberRoot } from "./ReactInternalTypes";
 import { NoLanes } from "./ReactFiberLane";
 import { createHostFiber } from "./ReactFiber";
+import { initializeUpdateQueue } from "./ReactUpdateQueue"
 
 /**
  * 
@@ -20,6 +21,7 @@ export function createFiberRoot(
   const initializedFiber = createHostFiber();
   root.current = initializedFiber;
   initializedFiber.stateNode = root;
+  initializeUpdateQueue(root.current);
   return root;
 }
 
