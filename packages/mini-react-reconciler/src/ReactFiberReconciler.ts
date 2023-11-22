@@ -1,7 +1,7 @@
+import { ReactElement } from "react";
 import { Fiber, FiberRoot } from "./ReactInternalTypes"
 import { RootTag } from "./ReactWorkTag"
 import { createFiberRoot } from "./ReactFiberRoot"
-import { ReactElement } from "@mini-react/mini-react-dom/src/ReactDomInternalTypes";
 import { createUpdate, enqueueUpdate } from "./ReactUpdateQueue";
 import { DefaultLane, Lane } from "./ReactFiberLane";
 import { createWorkInProgrss } from "./ReactFiber";

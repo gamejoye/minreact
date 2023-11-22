@@ -1,7 +1,8 @@
-import { ReactDomRoot, ReactElement } from "./ReactDomInternalTypes";
+import { ReactElement } from "react";
+import { ReactDomRoot } from "./ReactDomInternalTypes";
 import { ConcurrentTag, Fiber, FiberRoot, createContainer, updateContainer } from "@mini-react/mini-react-reconciler"
 
-function createRoot(containerInfo: Element): ReactDomRoot {
+export function createRoot(containerInfo: Element): ReactDomRoot {
   const root = createContainer(containerInfo, ConcurrentTag);
   // 连接dom和fiber
   markContainerAsRoot(root.current, containerInfo);
