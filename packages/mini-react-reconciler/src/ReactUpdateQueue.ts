@@ -51,3 +51,14 @@ export function initializeUpdateQueue(fiber: Fiber) {
   }
   fiber.updateQueue = updateQueue;
 }
+
+export function cloneUpdateQueue(
+  current: Fiber,
+  workInProgrss: Fiber
+) {
+  const currentQueue: SharedQueue = current.updateQueue;
+  const queue = {
+    pending: currentQueue.pending
+  }
+  workInProgrss.updateQueue = queue;
+}

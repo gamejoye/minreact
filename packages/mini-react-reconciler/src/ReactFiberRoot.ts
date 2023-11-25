@@ -12,12 +12,9 @@ import { initializeUpdateQueue } from "./ReactUpdateQueue"
  */
 export function createFiberRoot(
   containerInfo: Element,
-  tag: RootTag,
+  tag: RootTag
 ): FiberRoot {
-  const root: FiberRoot = new (FiberRootNode as any)(
-    containerInfo,
-    tag
-  );
+  const root: FiberRoot = new (FiberRootNode as any)(containerInfo, tag);
   const initializedFiber = createHostFiber();
   root.current = initializedFiber;
   initializedFiber.stateNode = root;
@@ -29,7 +26,7 @@ export function createFiberRoot(
 function FiberRootNode(
   this: any,
   containerInfo: Element,
-  tag: RootTag,
+  tag: RootTag
 ) {
   this.tag = tag;
   this.containerInfo = containerInfo;

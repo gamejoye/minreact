@@ -22,6 +22,7 @@ module.exports = {
       "@mini-react": path.resolve(__dirname, 'packages'),
     }
   },
+  devtool: 'source-map',
   devServer: {
     port: 8080,
     hot: true, // 热模块替换
