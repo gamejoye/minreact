@@ -84,6 +84,6 @@ function FiberNode(
   this.stateNode = null;
   this.index = 0;
   this.deletions = null;
-  this.subTreeFlags = NoFlags;
+  this.subtreeFlags = NoFlags;
   this.flags = NoFlags;
 }

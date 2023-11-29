@@ -29,9 +29,21 @@ function App() {
         <li>learing fundamentals of compiling</li>
       </ul>
       <hr />
-      <footer>nice to meet you</footer>
+      <p>nice to meet you</p>
+      <hr />
+      <footer><Concact /></footer>
     </div>
   )
+}
+function Concact() {
+  return <div className="concact">
+    <p>
+      gamejoye@gmail.com
+    </p>
+    <p>
+      3032535923@qq.com
+    </p>
+  </div>
 }
 root.render(
   <App />

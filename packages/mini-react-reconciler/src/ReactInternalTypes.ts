@@ -52,7 +52,7 @@ export type Fiber = {
    * 副作用
    */
   flags: Flags,
-  subTreeFlags: Flags,
+  subtreeFlags: Flags,
   deletions: Array<Fiber> | null,
 
   /**

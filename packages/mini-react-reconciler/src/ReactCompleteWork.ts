@@ -1,6 +1,7 @@
 import { createInstance, createTextInstance } from "@mini-react/mini-react-dom/src/ReactComponent";
 import { Fiber } from "./ReactInternalTypes";
 import { FunctionComponent, HostComponent, HostRoot, HostText } from "./ReactWorkTag";
+import { NoFlags } from "./ReactFiberFlag";
 
 
 function appendAllChildren(
@@ -33,15 +34,36 @@ function appendInitialChild(
   parentInstance.appendChild(childInstance);
 }
 
+
+// 收集下一层孩子及其孩子节点的兄弟节点的信息到completedWork
+function bubbleProperties(
+  completedWork: Fiber
+) {
+  let subtreeFlags = NoFlags;
+  let child = completedWork.child;
+
+  while(child !== null) {
+
+    subtreeFlags |= child.subtreeFlags;
+    subtreeFlags |= child.flags;
+
+    child = child.sibling; // move
+  }
+  completedWork.subtreeFlags = subtreeFlags;
+}
+
 export function completeWork(completedFiber: Fiber): null {
 
   switch (completedFiber.tag) {
     case FunctionComponent:
+      bubbleProperties(completedFiber);
       break;
     case HostRoot:
+      bubbleProperties(completedFiber);
       break;
     case HostText: {
       completedFiber.stateNode = createTextInstance(completedFiber.pendingProps);
+      bubbleProperties(completedFiber);
       break;
     }
     case HostComponent: {
@@ -52,6 +74,7 @@ export function completeWork(completedFiber: Fiber): null {
       );
       completedFiber.stateNode = instance
       appendAllChildren(instance, completedFiber);
+      bubbleProperties(completedFiber);
       break;
     }
   }

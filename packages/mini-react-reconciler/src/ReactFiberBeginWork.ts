@@ -1,6 +1,6 @@
 import { Fiber } from "./ReactInternalTypes";
 import { FunctionComponent, HostComponent, HostRoot, HostText } from "./ReactWorkTag";
-import { reconcileChildFibers } from "./ReactChildFiber"
+import { reconcileChildFibers, mountChildFibers } from "./ReactChildFiber"
 import { SharedQueue, cloneUpdateQueue } from "./ReactUpdateQueue";
 
 
@@ -81,12 +81,13 @@ function reconcileChildren(
   nextChildren: any
 ) {
   if (current === null) {
-    workInProgress.child = reconcileChildFibers(
+    workInProgress.child = mountChildFibers(
       workInProgress,
       null,
       nextChildren
     );
   } else {
+  console.log('--------------------: ', workInProgress, '\n', current, '\n', nextChildren)
     workInProgress.child = reconcileChildFibers(
       workInProgress,
       current.child,

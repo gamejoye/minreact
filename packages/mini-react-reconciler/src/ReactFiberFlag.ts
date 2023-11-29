@@ -8,3 +8,6 @@ export const Deletion = /*                  */ 0b00000100;
 export const ChildDeletion = /*             */ 0b00001000;
 export const Passive = /*                   */ 0b00010000;
 export const LayoutEffect = /*              */ 0b00100000;
+
+
+export const Mutation = Placement | Update

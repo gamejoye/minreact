@@ -3,6 +3,7 @@ import { Lane, DefaultLane } from "./ReactFiberLane";
 import { createWorkInProgress } from "./ReactFiber";
 import { beginWork } from "./ReactFiberBeginWork";
 import { completeWork } from "./ReactCompleteWork";
+import { commitMutationEffects } from "./ReactCommitWork";
 
 
 let workInProgressRoot: FiberRoot | null = null;
@@ -116,11 +117,29 @@ export function commitRoot(root: FiberRoot) {
   root.finishedWork = null;
   console.log('container: ', container);
   console.log('finishedWork: ', finishedWork);
+
+
   /**
-   * 这里应该实现mutation相关的操作(还未实现)
-   * 这里简单实现一下 让页面有一个初始的画面
+   * 异步调度刷新PasssiveEffects
+   * PassiveEffects其实就是useEffect
    */
-  container.appendChild(finishedWork.child.child.stateNode)
+
+  /**
+   * 这里react还有一个处理beforeMutations的步骤
+   * 这里mini-react并没有实现
+   * why？因为beforeMutations的是处理带有Snapshot的， 只有class组件才会带有这个flag
+   */
+
+  /**
+   * 这里实现mutation相关的操作
+   * 处理真实dom
+   */
+  commitMutationEffects(root, finishedWork);
+  //container.appendChild(finishedWork.child.child.stateNode)
+
+  /**
+   * 处理layoutEffects
+   */
 }
 
 /**
