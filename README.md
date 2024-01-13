@@ -9,7 +9,7 @@
     - [ ] effect destory处理
   - [ ] 🤭commitLayoutEffects(处理useLayoutEffect)
 - [ ] 😆支持hooks
-  - [ ] 😌useState
+  - [X] 😌useState
   - [ ] 🧐useEffect
   - [ ] 🤨useLayoutEffect 
 - [ ] 🥰可中断渲染
