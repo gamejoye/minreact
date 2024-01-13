@@ -4,10 +4,31 @@ import { createWorkInProgress } from "./ReactFiber";
 import { beginWork } from "./ReactFiberBeginWork";
 import { completeWork } from "./ReactCompleteWork";
 import { commitMutationEffects } from "./ReactCommitWork";
+import { HostRoot } from "./ReactWorkTag";
 
 
 let workInProgressRoot: FiberRoot | null = null;
 let workInProgress: Fiber | null = null;
+
+
+function markUpdateLaneFromFiberToRoot(
+  sourceFiber: Fiber,
+  lane: Lane,
+): FiberRoot | null {
+  
+  let parent = sourceFiber.return;
+  let node = sourceFiber;
+  while(parent !== null) {
+    node = parent;
+    parent = parent.return;
+  }
+
+  if(node.tag === HostRoot) {
+    return (node.stateNode as FiberRoot);
+  }
+
+  return null;
+}
 
 /**
  * 这个函数的作用是告诉react进行虚拟dom(fiber树)的更新
@@ -16,7 +37,7 @@ export function scheduleUpdateOnFiber(
   fiber: Fiber,
   lane: Lane
 ) {
-  const root: FiberRoot = fiber.stateNode;
+  const root: FiberRoot = markUpdateLaneFromFiberToRoot(fiber, lane);
   if (root === null) {
     return;
   }
@@ -86,20 +107,23 @@ export function performUnitOfWork(unitOfWork: Fiber) {
   let next = null;
   next = beginWork(current, unitOfWork);
 
+  unitOfWork.memoizedProps = unitOfWork.pendingProps;
+
   if (next === null) {
     completeUnitOfWork(unitOfWork);
   } else {
     workInProgress = next;
   }
+  
 }
-
 
 
 export function completeUnitOfWork(unitOfWork: Fiber): void {
   let completedWork = unitOfWork;
   do {
     console.log('completedWork: ', completedWork)
-    completeWork(completedWork);
+    const current = completedWork.alternate;
+    completeWork(current, completedWork);
 
     if (completedWork.sibling !== null) {
       workInProgress = completedWork.sibling;
@@ -136,6 +160,7 @@ export function commitRoot(root: FiberRoot) {
    */
   commitMutationEffects(root, finishedWork);
   //container.appendChild(finishedWork.child.child.stateNode)
+  root.current = finishedWork;
 
   /**
    * 处理layoutEffects

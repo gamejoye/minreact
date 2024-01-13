@@ -2,6 +2,7 @@ import { Fiber } from "./ReactInternalTypes";
 import { FunctionComponent, HostComponent, HostRoot, HostText } from "./ReactWorkTag";
 import { reconcileChildFibers, mountChildFibers } from "./ReactChildFiber"
 import { SharedQueue, cloneUpdateQueue } from "./ReactUpdateQueue";
+import { renderWithHooks } from "./ReactFiberHooks";
 
 
 function updateHostRoot(
@@ -59,7 +60,8 @@ function updateFunctionComponent(
     `)
   }
   const props = workInProgress.pendingProps;
-  let children = Component(props);
+  let children = renderWithHooks(current, workInProgress, Component, props);
+  
   reconcileChildren(
     current,
     workInProgress,

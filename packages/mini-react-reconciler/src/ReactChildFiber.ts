@@ -55,7 +55,7 @@ function ChildReconciler(isMount: boolean) {
     returnFiber: Fiber,
     childToDelete: Fiber
   ) {
-    if(isMount) {
+    if (isMount) {
       // 对于一个处在mount阶段的fiber节点
       // 不应该存在deleteChild这个操作
       return;
@@ -78,7 +78,7 @@ function ChildReconciler(isMount: boolean) {
     newInx: number
   ): number {
     newFiber.index = newInx;
-    if(isMount) {
+    if (isMount) {
       return lastPlacedIndex;
     }
     const current = newFiber.alternate;
@@ -159,18 +159,13 @@ function ChildReconciler(isMount: boolean) {
       || current.type !== elementType
     ) {
       // 新建节点
-      if (current === null) {
-        const created = createFiberFromElement(element);
-        created.return = returnFiber;
-        return created;
-      }
-      const existing = useFiber(current, element.props);
-      existing.return = returnFiber;
-      return existing;
+      const created = createFiberFromElement(element);
+      created.return = returnFiber;
+      return created;
     }
-    const created = createFiberFromElement(element);
-    created.return = returnFiber;
-    return created;
+    const existing = useFiber(current, element.props);
+    existing.return = returnFiber;
+    return existing;
   }
 
   function updateTextNode(

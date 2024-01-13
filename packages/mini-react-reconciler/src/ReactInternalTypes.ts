@@ -1,4 +1,5 @@
 import { Flags } from "./ReactFiberFlag";
+import { BasicStateAction, Dispatch } from "./ReactFiberHooks";
 import { Lanes } from "./ReactFiberLane";
 import { WorkTag, RootTag } from "./ReactWorkTag";
 
@@ -75,3 +76,6 @@ export type FiberRoot = {
 } & BaseFiberRootProperties;
 
 
+export type Dispatcher = {
+  useState: <S>(initialState: (() => S) | S) => [S, Dispatch<BasicStateAction<S>>]
+}

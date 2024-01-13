@@ -1,6 +1,7 @@
+import { updateDOMProperties, updateFiberProps } from "@mini-react/mini-react-dom/src/ReactComponent";
 import { Mutation, NoFlags, Placement, PlacementAndUpdate, Update } from "./ReactFiberFlag";
 import { Fiber, FiberRoot } from "./ReactInternalTypes";
-import { HostComponent, HostRoot, HostText } from "./ReactWorkTag";
+import { FunctionComponent, HostComponent, HostRoot, HostText } from "./ReactWorkTag";
 
 
 let nextEffect: Fiber | null;
@@ -22,7 +23,9 @@ function commitMutationEffectsBegin() {
     // 处理删除
     const deletions = fiber.deletions;
     if (deletions !== null) {
-
+      for (const childToDelete of deletions) {
+        commitDeletion(childToDelete, fiber);
+      }
     }
 
     const child = fiber.child;
@@ -65,21 +68,141 @@ function commitMutationEffectsOnFiber(
 
   switch (primaryFlags) {
     case Placement: {
-      console.log('Placement Fiber', fiber);
+      console.error('Placement Fiber', fiber);
       commitPlace(fiber);
+      fiber.flags &= ~Placement;
       break;
     }
     case PlacementAndUpdate: {
-      console.log('PlacementAndUpdate Fiber', fiber);
+      console.error('PlacementAndUpdate Fiber', fiber);
+      commitPlace(fiber);
+      fiber.flags &= ~Placement;
+
+      const current = fiber.alternate;
+      commitWork(current, fiber);
       break;
     }
     case Update: {
-      console.log('Update Fiber', fiber);
+      console.error('Update Fiber', fiber);
+      const current = fiber.alternate;
+      commitWork(current, fiber);
       break;
     }
   }
 }
 
+function commitDeletion(
+  current: Fiber,
+  nearestMountedAncestor: Fiber,
+) {
+  let node = current;
+
+  let currentParent: Fiber;
+
+  while (true) {
+    let parent = current.return;
+    let isParentFind = false;
+    while (true) {
+      if (!parent) {
+        throw new Error(
+          `
+          期望有一个parent
+          但是在findParent过程中出现null
+          `
+        )
+      }
+      switch (parent.tag) {
+        case HostComponent: {
+          currentParent = parent;
+          isParentFind = true;
+          break;
+        }
+        case HostRoot: {
+          currentParent = parent;
+          isParentFind = true;
+          break;
+        }
+      }
+      if (isParentFind) break;
+      parent = parent.return;
+    }
+
+    if (node.tag === HostComponent || node.tag === HostText) {
+      // host fiber
+      /**
+       * 处理node的subTree
+       * eg:
+       * (
+       *  <div>
+       *    <FunctionComponent1 />
+       *    <FunctionComponent2 />
+       *    <div>
+       *      <FunctionComponent3 />
+       *    </div>
+       *  </div>
+       * )
+       */
+      commitNestedUnmount(node);
+      (currentParent.stateNode as Element).removeChild(node.stateNode as Element);
+    } else if(node.tag === FunctionComponent) {
+      // function fiber
+      commitUnmount(node);
+      if (node.child !== null) {
+        node = node.child;
+        continue;
+      }
+    } else {
+      throw new Error(
+        `
+        unknow fiber.tag
+        `
+      )
+    }
+
+    while (node.sibling === null) {
+      if (node === current || node.return === null || node.return === current) {
+        // commit completed !
+        return;
+      }
+      node = node.return;
+    }
+    node = node.sibling;
+  }
+}
+
+function commitNestedUnmount(
+  root: Fiber
+) {
+  let node = root;
+  while (node !== null) {
+    commitUnmount(node);
+
+    if(node.child !== null) {
+      node = node.child;
+      continue;
+    }
+
+    while(node.sibling === null) {
+      if(node.return === null || node.return === root) {
+        return;
+      }
+      node = node.return;
+    }
+    node = node.sibling;
+  }
+}
+
+function commitUnmount(node: Fiber) {
+  switch(node.tag) {
+    case HostComponent: {
+      return;
+    }
+    case FunctionComponent: {
+      // 处理effect destory
+      return;
+    }
+  }
+}
 
 function commitPlace(
   finishedWork: Fiber
@@ -100,7 +223,59 @@ function commitPlace(
       break;
     }
   }
+}
 
+function commitWork(
+  current: Fiber | null,
+  finishedWork: Fiber
+) {
+  switch (finishedWork.tag) {
+    case FunctionComponent: {
+      // 处理layoutEffect
+      break;
+    }
+    case HostComponent: {
+      const instance = finishedWork.stateNode;
+      if (instance !== null) {
+        const newProps = finishedWork.memoizedProps;
+        const oldProps = current !== null ? current.memoizedProps : newProps;
+        const updateQueue = finishedWork.updateQueue;
+        finishedWork.updateQueue = null;
+        if (updateQueue !== null) {
+          commitUpdate(instance, updateQueue, oldProps, newProps);
+        }
+      }
+      break;
+    }
+    case HostText: {
+      const textInstance = finishedWork.stateNode;
+      const newText = finishedWork.memoizedProps;
+      const oldText = current === null ? newText : current.memoizedProps;
+
+      if (oldText !== newText) {
+        commitTextUpdate(textInstance, oldText, newText);
+      }
+      break;
+    }
+  }
+}
+
+function commitUpdate(
+  instance: Element,
+  updatePayload: Array<[string, any]>,
+  oldProps: any,
+  newProps: any,
+) {
+  updateDOMProperties(instance, updatePayload);
+  updateFiberProps(instance, newProps);
+}
+
+function commitTextUpdate(
+  textInstance: Element,
+  oldText: string,
+  newText: string
+) {
+  textInstance.nodeValue = newText;
 }
 
 function isHostParent(
@@ -167,7 +342,7 @@ function getHostSibling(fiber: Fiber): Element | null {
         break;
       }
       // 尝试向下探索
-      if (node.child === null) {
+      if (!needContinue && node.child === null) {
         needContinue = true;
         break;
       } else {

@@ -1,24 +1,28 @@
-import { createInstance, createTextInstance } from "@mini-react/mini-react-dom/src/ReactComponent";
+import { createInstance, createTextInstance, diffProperties, isEvent, isProperty, setInitialDOMProperties } from "@mini-react/mini-react-dom/src/ReactComponent";
 import { Fiber } from "./ReactInternalTypes";
 import { FunctionComponent, HostComponent, HostRoot, HostText } from "./ReactWorkTag";
-import { NoFlags } from "./ReactFiberFlag";
+import { NoFlags, Update } from "./ReactFiberFlag";
 
+
+function markUpdate(workInProgress: Fiber) {
+  workInProgress.flags |= Update;
+}
 
 function appendAllChildren(
   parent: Element,
   workInProgrss: Fiber
 ) {
   let node = workInProgrss.child;
-  while(node !== null && node !== workInProgrss) {
-    if(node.tag === HostComponent || node.tag === HostText) {
+  while (node !== null && node !== workInProgrss) {
+    if (node.tag === HostComponent || node.tag === HostText) {
       appendInitialChild(parent, node.stateNode);
-    } else if(node.child !== null) {
+    } else if (node.child !== null) {
       // 函数组件
       node = node.child;
       continue;
     }
-    while(node.sibling === null) {
-      if(node.return === null || node.return === workInProgrss) {
+    while (node.sibling === null) {
+      if (node.return === null || node.return === workInProgrss) {
         return;
       }
       node = node.return;
@@ -29,7 +33,7 @@ function appendAllChildren(
 
 function appendInitialChild(
   parentInstance: Element,
-  childInstance: Element | Text 
+  childInstance: Element | Text
 ) {
   parentInstance.appendChild(childInstance);
 }
@@ -42,7 +46,7 @@ function bubbleProperties(
   let subtreeFlags = NoFlags;
   let child = completedWork.child;
 
-  while(child !== null) {
+  while (child !== null) {
 
     subtreeFlags |= child.subtreeFlags;
     subtreeFlags |= child.flags;
@@ -52,8 +56,46 @@ function bubbleProperties(
   completedWork.subtreeFlags = subtreeFlags;
 }
 
-export function completeWork(completedFiber: Fiber): null {
 
+
+
+function updateHostComponent(
+  current: Fiber,
+  workInProgress: Fiber,
+  type: string,
+  newProps: any,
+) {
+  const oldProps = current.memoizedProps;
+
+  if (oldProps === newProps) {
+    // skip
+    return;
+  }
+
+  const instance = workInProgress.stateNode;
+  const updateQueue = diffProperties(instance, type, oldProps, newProps);
+  console.log(current, workInProgress, updateQueue)
+  workInProgress.updateQueue = updateQueue;
+  if (updateQueue) {
+    markUpdate(workInProgress);
+  }
+}
+
+function updateHostText(
+  current: Fiber,
+  workInProgress: Fiber,
+  oldText: string,
+  newText: string,
+) {
+  if (oldText !== newText) {
+    markUpdate(workInProgress);
+  }
+};
+
+export function completeWork(
+  current: Fiber | null,
+  completedFiber: Fiber
+): null {
   switch (completedFiber.tag) {
     case FunctionComponent:
       bubbleProperties(completedFiber);
@@ -62,18 +104,36 @@ export function completeWork(completedFiber: Fiber): null {
       bubbleProperties(completedFiber);
       break;
     case HostText: {
-      completedFiber.stateNode = createTextInstance(completedFiber.pendingProps);
+      const newText = completedFiber.memoizedProps;
+
+      if (current !== null && completedFiber.stateNode !== null) {
+        const oldText = current.memoizedProps;
+        updateHostText(current, completedFiber, oldText, newText);
+      } else {
+        completedFiber.stateNode = createTextInstance(completedFiber.pendingProps);
+      }
+
       bubbleProperties(completedFiber);
       break;
     }
     case HostComponent: {
-      const instance = createInstance(
-        completedFiber.type,
-        completedFiber.pendingProps,
-        completedFiber
-      );
-      completedFiber.stateNode = instance
-      appendAllChildren(instance, completedFiber);
+      const newProps = completedFiber.pendingProps;
+      const type = completedFiber.type;
+
+      if (current !== null && completedFiber.stateNode !== null) {
+        updateHostComponent(current, completedFiber, type, newProps);
+      } else {
+        const instance = createInstance(
+          completedFiber.type,
+          completedFiber.pendingProps,
+          completedFiber
+        );
+
+        completedFiber.stateNode = instance;
+        appendAllChildren(instance, completedFiber);
+        setInitialDOMProperties(instance, type, newProps);
+      }
+
       bubbleProperties(completedFiber);
       break;
     }
