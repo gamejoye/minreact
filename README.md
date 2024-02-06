@@ -16,7 +16,6 @@
   - [X] commitMutationEffects(将虚拟dom映射到真实dom)
   - [X] 处理commitMutation阶段的commmitDeletion逻辑
     - [X] dom删除逻辑
-    - [X] effect destory处理
   - [ ] commitLayoutEffects(处理useLayoutEffect)
 - [ ] 支持hooks
   - [X] useState
