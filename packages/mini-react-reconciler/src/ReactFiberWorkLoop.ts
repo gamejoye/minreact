@@ -6,7 +6,7 @@ import { completeWork } from "./ReactCompleteWork";
 import { commitMutationEffects, commitPassiveMountEffects, commitPassiveUnmountEffects } from "./ReactCommitWork";
 import { HostRoot } from "./ReactWorkTag";
 import { scheduleCallback, shouldYieldToHost } from "@mini-react/mini-react-scheduler";
-import { NoFlags, Passive } from "./ReactFiberFlag";
+import { NoFlags, Passive, PassiveMask } from "./ReactFiberFlag";
 import { ReactCurrentBatchConfig } from "./ReactBatchConfig";
 import { DefaultEventPriority, DiscreteEventPriority, getCurrentUpdatePriority } from "./ReactEventPriorities";
 
@@ -231,8 +231,8 @@ export function commitRoot(root: FiberRoot) {
    * 准备异步处理useEffect
    */
   if (
-    (finishedWork.subtreeFlags & Passive) !== NoFlags ||
-    (finishedWork.flags & Passive) !== NoFlags
+    (finishedWork.subtreeFlags & PassiveMask) !== NoFlags ||
+    (finishedWork.flags & PassiveMask) !== NoFlags
   ) {
     rootWithPassiveEffects = root;
     scheduleCallback(() => {
