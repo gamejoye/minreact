@@ -88,7 +88,6 @@ export function updateDOMProperties(
   updateQueue: Array<[string, any]>
 ) {
   for (const [key, value] of updateQueue) {
-    console.log(key, value)
     if (isEvent(key)) {
       const eventName = key.toLocaleLowerCase().substring(2);
 
