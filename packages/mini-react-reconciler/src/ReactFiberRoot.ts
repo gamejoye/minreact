@@ -1,6 +1,6 @@
 import { RootTag } from "./ReactWorkTag";
 import { FiberRoot } from "./ReactInternalTypes";
-import { NoLanes } from "./ReactFiberLane";
+import { NoLane, NoLanes } from "./ReactFiberLane";
 import { createHostFiber } from "./ReactFiber";
 import { initializeUpdateQueue } from "./ReactUpdateQueue"
 
@@ -32,9 +32,13 @@ function FiberRootNode(
   this.containerInfo = containerInfo;
   this.current = null;
   this.finishedWork = null;
-  this.finishedLanes = NoLanes;
   this.pendingProps = null;
   this.memoizedProps = null;
   this.pendingState = null;
   this.memoizedState = null;
+  this.callbackNode = null;
+  this.callbackPriority = NoLane;
+
+  this.pendingLanes = NoLanes;
+  this.finishedLanes = NoLanes;
 }

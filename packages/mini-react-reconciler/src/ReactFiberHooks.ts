@@ -1,6 +1,8 @@
-import { requestUpdateLane, scheduleUpdateOnFiber } from "./ReacFiberWorkLoop";
+import { requestUpdateLane, scheduleUpdateOnFiber } from "./ReactFiberWorkLoop";
 import { ReactCurrentDispatcher } from "./ReactDispatcher";
+import { Flags, Passive } from "./ReactFiberFlag";
 import { Lane } from "./ReactFiberLane";
+import { HookFlags, HookHasEffect, HookPassive } from "./ReactHookFlag";
 import { Dispatcher, Fiber } from "./ReactInternalTypes";
 
 
@@ -17,11 +19,23 @@ export type UpdateQueue<S, A> = {
   lastRenderedState: S | null
 }
 
+export type FunctionComponentUpdateQueue = {
+  lastEffect: Effect | null,
+};
+
 export type Hook = {
   memoizedState: any,
   queue: any,
   next: Hook | null,
 }
+
+export type Effect = {
+  tag: HookFlags,
+  create: () => (() => undefined) | undefined,
+  destroy: (() => undefined) | undefined,
+  deps: Array<any> | null,
+  next: Effect,
+};
 
 export type BasicStateAction<S> = ((state: S) => S) | S
 
@@ -208,6 +222,123 @@ function updateState<S>(
 }
 
 
+function mountEffect(
+  create: () => (() => undefined) | undefined,
+  deps?: Array<any>
+) {
+  mountEffectImpl(
+    Passive,
+    HookPassive,
+    create,
+    deps
+  )
+}
+
+function mountEffectImpl(
+  fiberFlags: Flags,
+  hookFlags: HookFlags,
+  create: () => (() => undefined) | undefined,
+  deps?: Array<any>
+) {
+  if (deps === undefined) {
+    deps = null;
+  }
+  const hook = mountWorkInProgressHook();
+  currentlyRenderingFiber.flags |= fiberFlags;
+  hook.memoizedState = pushEffect(
+    hookFlags | HookHasEffect,
+    create,
+    undefined,
+    deps,
+  );
+}
+
+function updateEffect(
+  create: () => (() => undefined) | undefined,
+  deps?: Array<any>
+) {
+  updateEffectImpl(
+    Passive,
+    HookPassive,
+    create,
+    deps,
+  );
+}
+
+function updateEffectImpl(
+  fiberFlags: Flags,
+  hookFlags: HookFlags,
+  create: () => (() => undefined) | undefined,
+  deps?: Array<any>
+) {
+  const nextDeps = deps === undefined ? null : deps;
+  const hook = updateWorkInProgressHook();
+
+  const destroy = (currentHook.memoizedState as Effect).destroy;
+
+  if (nextDeps !== null) {
+    // 比较前后deps是否一样
+    const prevDeps = (currentHook.memoizedState as Effect).deps;
+    const areEqual =
+      prevDeps.length === nextDeps.length
+      && nextDeps.every((nextDep, index) => nextDep === prevDeps[index]);
+
+    if(areEqual) {
+      hook.memoizedState = pushEffect(
+        hookFlags,
+        create,
+        destroy,
+        nextDeps
+      );
+      return;
+    }
+  }
+
+  // 前后deps不一致
+  currentlyRenderingFiber.flags |= fiberFlags;
+  hook.memoizedState = pushEffect(
+    hookFlags | HookHasEffect,
+    create,
+    undefined,
+    deps,
+  );
+
+}
+
+function pushEffect(
+  tag: HookFlags,
+  create: (() => (() => undefined) | undefined),
+  destroy: (() => undefined) | undefined,
+  deps: Array<any> | null,
+) {
+  const effect: Effect = {
+    tag,
+    create,
+    destroy,
+    deps,
+    next: null,
+  };
+
+  let fucntionComponentUpdateQueue = currentlyRenderingFiber.updateQueue as (FunctionComponentUpdateQueue);
+  if(fucntionComponentUpdateQueue === null) {
+    currentlyRenderingFiber.updateQueue = fucntionComponentUpdateQueue = {
+      lastEffect: null,
+    };
+    fucntionComponentUpdateQueue.lastEffect = effect.next = effect;
+  } else {
+    const lastEffect = fucntionComponentUpdateQueue.lastEffect;
+    if (lastEffect === null) {
+      fucntionComponentUpdateQueue.lastEffect = effect.next = effect;
+    } else {
+      const firstEffect = lastEffect.next;
+      lastEffect.next = effect;
+      effect.next = firstEffect;
+      fucntionComponentUpdateQueue.lastEffect = effect;
+    }
+  }
+  return effect;
+}
+
 function dispatchSetState<S, A>(
   fiber: Fiber,
   queue: UpdateQueue<S, A>,
@@ -249,10 +380,12 @@ function enqueueUpdate<S, A>(
 
 
 const HooksDispatcherOnMount: Dispatcher = {
-  useState: mountState
+  useState: mountState,
+  useEffect: mountEffect,
 }
 
 const HooksDispatcherOnUpdate: Dispatcher = {
-  useState: updateState
+  useState: updateState,
+  useEffect: updateEffect,
 }
 

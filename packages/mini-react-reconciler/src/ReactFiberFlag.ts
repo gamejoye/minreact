@@ -10,4 +10,5 @@ export const Passive = /*                   */ 0b00010000;
 export const LayoutEffect = /*              */ 0b00100000;
 
 
-export const Mutation = Placement | Update
+export const Mutation = Placement | Update | ChildDeletion;
+export const PassiveMask = Passive | ChildDeletion;

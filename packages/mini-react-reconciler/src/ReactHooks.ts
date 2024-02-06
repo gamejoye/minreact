@@ -6,3 +6,11 @@ export function useState<S>(
   const dispatcher = resolveDispatcher();
   return dispatcher.useState(initialState);
 }
+
+export function useEffect(
+  create: () => (() => undefined | undefined),
+  deps?: any[]
+) {
+  const dispatcher = resolveDispatcher();
+  return dispatcher.useEffect(create, deps);
+}

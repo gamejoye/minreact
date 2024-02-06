@@ -1,6 +1,7 @@
+import { Task } from "@mini-react/mini-react-scheduler";
 import { Flags } from "./ReactFiberFlag";
 import { BasicStateAction, Dispatch } from "./ReactFiberHooks";
-import { Lanes } from "./ReactFiberLane";
+import { Lane, Lanes } from "./ReactFiberLane";
 import { WorkTag, RootTag } from "./ReactWorkTag";
 
 export type FiberKey = string | null;
@@ -69,6 +70,8 @@ type BaseFiberRootProperties = {
   finishedWork: Fiber | null,
   containerInfo: any,
   pendingLanes: Lanes,
+  callbackNode: Task,
+  callbackPriority: Lane,
 };
 
 export type FiberRoot = {
@@ -77,5 +80,9 @@ export type FiberRoot = {
 
 
 export type Dispatcher = {
-  useState: <S>(initialState: (() => S) | S) => [S, Dispatch<BasicStateAction<S>>]
+  useState: <S>(initialState: (() => S) | S) => [S, Dispatch<BasicStateAction<S>>],
+  useEffect(
+    create: () => (() => void) | void,
+    deps: Array<any> | undefined,
+  ): void,
 }
