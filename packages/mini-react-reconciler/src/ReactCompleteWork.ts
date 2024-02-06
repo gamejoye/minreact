@@ -74,7 +74,6 @@ function updateHostComponent(
 
   const instance = workInProgress.stateNode;
   const updateQueue = diffProperties(instance, type, oldProps, newProps);
-  console.log(current, workInProgress, updateQueue)
   workInProgress.updateQueue = updateQueue;
   if (updateQueue) {
     markUpdate(workInProgress);

@@ -3,11 +3,11 @@ import { Fiber, FiberRoot } from "./ReactInternalTypes"
 import { RootTag } from "./ReactWorkTag"
 import { createFiberRoot } from "./ReactFiberRoot"
 import { createUpdate, enqueueUpdate } from "./ReactUpdateQueue";
-import { requestUpdateLane, scheduleUpdateOnFiber } from "./ReacFiberWorkLoop";
+import { requestUpdateLane, scheduleUpdateOnFiber } from "./ReactFiberWorkLoop";
 
 
 
-// 创建Fiber树根节点  
+// 创建Fiber树根节点
 export function createContainer(
   containerInfo: Element,
   tag: RootTag

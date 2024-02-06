@@ -89,7 +89,6 @@ function reconcileChildren(
       nextChildren
     );
   } else {
-  console.log('--------------------: ', workInProgress, '\n', current, '\n', nextChildren)
     workInProgress.child = reconcileChildFibers(
       workInProgress,
       current.child,
@@ -102,7 +101,6 @@ export function beginWork(
   current: Fiber | null,
   workInProgress: Fiber,
 ): Fiber | null {
-  console.warn('workInProgrss: ', workInProgress);
   switch (workInProgress.tag) {
     case FunctionComponent: {
       const Component = workInProgress.type;
