@@ -1,7 +1,7 @@
 import { requestUpdateLane, scheduleUpdateOnFiber } from "./ReactFiberWorkLoop";
 import { ReactCurrentDispatcher } from "./ReactDispatcher";
 import { Flags, Passive } from "./ReactFiberFlag";
-import { Lane } from "./ReactFiberLane";
+import { Lane, NoLane } from "./ReactFiberLane";
 import { HookFlags, HookHasEffect, HookPassive } from "./ReactHookFlag";
 import { Dispatcher, Fiber } from "./ReactInternalTypes";
 
@@ -25,6 +25,8 @@ export type FunctionComponentUpdateQueue = {
 
 export type Hook = {
   memoizedState: any,
+  baseState: any,
+  baseQueue: Update<any, any> | null,
   queue: any,
   next: Hook | null,
 }
@@ -114,7 +116,9 @@ function mountWorkInProgressHook(): Hook {
   const hook: Hook = {
     memoizedState: null,
     queue: null,
-    next: null
+    baseState: null,
+    baseQueue: null,
+    next: null,
   }
 
   if (workInProgressHook === null) {
@@ -152,6 +156,8 @@ function updateWorkInProgressHook(): Hook {
 
   const newHook: Hook = {
     memoizedState: currentHook.memoizedState,
+    baseState: currentHook.baseState,
+    baseQueue: currentHook.baseQueue,
     queue: currentHook.queue,
     next: null
   }
@@ -200,21 +206,99 @@ function updateState<S>(
   const queue: UpdateQueue<S, BasicStateAction<S>> = hook.queue;
 
   const reducer = queue.lastRenderedReducer;
-  const state = queue.lastRenderedState;
+
+  const current = currentHook;
+  let baseQueue = current.baseQueue;
 
   const pending = queue.pending;
 
   if (pending !== null) {
-    const first = pending.next;
+    if (baseQueue !== null) {
+      // 合并baseQueue和pendingQueue
+      /**
+       * baseQueue:
+       * 1 -> 2 -> 3 -> [1] 形成自环
+       * pending:
+       * 4 -> 5 -> 6 -> [4] 形成自环
+       * 
+       * baseQueue和pendingQueue分别指向环形链表的最后一个节点(最新的update)
+       * 
+       * 合并之后:
+       * 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> [1]
+      */
+      const baseFirst = baseQueue.next;
+      const pendingFirst = pending.next;
+      /**
+       * 让baseQueue(之前更新还没有处理的最新的update)的下一个指向pendingFirst(此次更新需要处理的最旧的update)
+       */
+      baseQueue.next = pendingFirst;
+      /**
+       * 让pending(此次更新需要处理的最新的update)指向baseFirst(之前更新还没有处理的最旧的update)
+       */
+      pending.next = baseFirst;
+    }
+    current.baseQueue = baseQueue = pending;
+    // 注意设置为null 防止app随着更新增多导致环形链表不断占用内存
+    queue.pending = null;
+  }
+
+  if (baseQueue !== null) {
+    const first = baseQueue.next;
     let update = first;
-    let newState = state;
+    let newBaseState = null;
+    let newBaseStateLast: Update<any, any> = null;
+    let newBaseStateFirst: Update<any, any> = null;
+    let newState = current.baseState;
 
     do {
-      newState = reducer(state, update.action);
-      update = update.next;
+
+      // TODO 根据优先级判断当前update是否执行
+      if (/* 优先级不够 */false) {
+        const clone: Update<any, any> = {
+          action: update.action,
+          lane: update.lane,
+          next: null,
+        };
+        if (newBaseStateLast === null) {
+          // 从这个update开始 后面所有的update都要加入baseQueue
+          newBaseStateFirst = newBaseStateLast = clone;
+          // 所以将newBaseState设置为newState
+          newBaseState = newState;
+        } else {
+          newBaseStateLast = newBaseStateLast.next = clone;
+        }
+      } else {
+        // 对于高优先级update直接处理
+
+        if (newBaseStateLast !== null) {
+          // 如果之前有没有处理的低优先级update
+          // 需要保持从第1个未处理的update到最后一个update的完整
+          const clone: Update<any, any> = {
+            action: update.action,
+            lane: NoLane, // 这里是用NoLane是为了保证下一次更新 这个update不会被跳过
+            next: null,
+          };
+          newBaseStateLast = newBaseStateLast.next = clone;
+        }
+
+        newState = reducer(newState, update.action);
+        update = update.next;
+      }
     } while (update !== null && update !== first);
 
+    if (newBaseStateLast !== null) {
+      // 把baseQueue连成环
+      newBaseStateLast.next = newBaseStateFirst;
+    } else {
+      // 没有优先级不够的update 
+      // baseState已经是最新的了
+      newBaseState = newState;
+    }
+
     hook.memoizedState = newState;
+    hook.baseState = newBaseState;
+    hook.baseQueue = newBaseStateLast;
+
     queue.lastRenderedState = newState;
   }
 
@@ -283,7 +367,7 @@ function updateEffectImpl(
       prevDeps.length === nextDeps.length
       && nextDeps.every((nextDep, index) => nextDep === prevDeps[index]);
 
-    if(areEqual) {
+    if (areEqual) {
       hook.memoizedState = pushEffect(
         hookFlags,
         create,
@@ -320,7 +404,7 @@ function pushEffect(
   };
 
   let fucntionComponentUpdateQueue = currentlyRenderingFiber.updateQueue as (FunctionComponentUpdateQueue);
-  if(fucntionComponentUpdateQueue === null) {
+  if (fucntionComponentUpdateQueue === null) {
     currentlyRenderingFiber.updateQueue = fucntionComponentUpdateQueue = {
       lastEffect: null,
     };
