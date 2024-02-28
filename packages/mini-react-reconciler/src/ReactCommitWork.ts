@@ -1,4 +1,4 @@
-import { updateDOMProperties, updateFiberProps } from "@mini-react/mini-react-dom/src/ReactComponent";
+import { updateDOMProperties, updateFiberProps } from "@mini-react/mini-react-dom";
 import { ChildDeletion, Mutation, NoFlags, PassiveMask, Placement, PlacementAndUpdate, Update } from "./ReactFiberFlag";
 import { Fiber, FiberRoot } from "./ReactInternalTypes";
 import { FunctionComponent, HostComponent, HostRoot, HostText } from "./ReactWorkTag";
