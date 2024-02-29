@@ -26,7 +26,72 @@
   - [ ] useTransition
   - [ ] useDeferredValue
 
+## 安装
+
+使用 npm 安装：
+
+```sh
+npm i @gamejoye/minreact
+```
+
+## 快速开始
+
+- 入口
+```
+import { createRoot } from '@gamejoye/minreact';
+
+const root = createRoot(document.getElementById('root'));
+root.render(
+  <div>Replace this with your app</div>
+);
+```
+
+- 使用 useState useEffect
+```
+import { useState, useEffect } from "@gamejoye/minreact";
+
+function Counter() {
+  const [count, setCount] = useState(0);
+
+  useEffect(() => {
+    console.log('App mount...');
+
+    return () => {
+      console.log('App unmount...');
+    };
+  }, [count]);
+
+  const add = () => {
+    setCount(count + 1);
+  };
+
+  return (
+    <div>
+      <div>
+        this is div element, count: {count}
+      </div>
+      <button onClick={add}>add count</button>
+    </div>
+  );
+}
+```
+
+## 运行本项目
+
+克隆项目到本地
+
+```sh
+git clone https://github.com/gamejoye/minreact.git
+```
+
+进入项目根目录运行
+
+```sh
+cd minreact
+npm run dev
+```
+
+
+
 ## 联系方式
 - gamejoye@gmail.com
-
-## 学习资料
