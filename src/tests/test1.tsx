@@ -10,8 +10,10 @@ export default function App() {
     return undefined;
   }, []);
   useEffect(function func2 () {
-    (console as any).logger('count变化...');
-    return undefined;
+    (console as any).logger('count mount...');
+    return () => {
+      (console as any).logger('count unmount...');
+    };
   }, [count]);
   return (
     <div>
@@ -19,7 +21,7 @@ export default function App() {
         count: {count}
       </div>
       <div>
-        {count % 5 === 0 ? <Sub/> : <div>hi</div>}
+        {count % 100 === 0 ? <Sub/> : <div>hi</div>}
       </div>
       <button onClick={add}>
         add
