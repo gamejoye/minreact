@@ -72,8 +72,8 @@ function commitPassiveUnmountEffectsBegin() {
       // 子树有节点被删除了
       // 不管deps有没有变化都需要处理useEffect的unmount
       const deletions = fiber.deletions;
-      if(deletions !== null) {
-        for(const fiberToDelete of deletions) {
+      if (deletions !== null) {
+        for (const fiberToDelete of deletions) {
           nextEffect = fiberToDelete;
           commitPassiveUnmountEffectsInsideOfDeletedTreeBegin(fiberToDelete);
         }
@@ -229,10 +229,12 @@ function commitPassiveUnmountOnFiber(fiber: Fiber) {
         const firstEffect = lastEffect.next;
         let effect = firstEffect;
         do {
-          const destroy = effect.destroy;
-          effect.destroy = undefined;
-          if (typeof destroy === 'function') {
-            destroy();
+          if ((effect.tag & HookHasEffect) != NoFlags) {
+            const destroy = effect.destroy;
+            effect.destroy = undefined;
+            if (typeof destroy === 'function') {
+              destroy();
+            }
           }
           effect = effect.next;
         } while (effect !== firstEffect);

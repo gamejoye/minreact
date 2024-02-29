@@ -383,7 +383,7 @@ function updateEffectImpl(
   hook.memoizedState = pushEffect(
     hookFlags | HookHasEffect,
     create,
-    undefined,
+    destroy,
     deps,
   );
 
