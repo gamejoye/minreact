@@ -5,7 +5,7 @@ export type SharedQueue = {
   pending: Update | null
 }
 
-export type Update = {
+type Update = {
   payload: any,
   next: Update | null,
   lane: Lane

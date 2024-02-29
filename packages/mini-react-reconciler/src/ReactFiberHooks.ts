@@ -6,7 +6,7 @@ import { HookFlags, HookHasEffect, HookPassive } from "./ReactHookFlag";
 import { Dispatcher, Fiber } from "./ReactInternalTypes";
 
 
-export type Update<S, A> = {
+type Update<S, A> = {
   action: A,
   next: Update<S, A>,
   lane: Lane,
