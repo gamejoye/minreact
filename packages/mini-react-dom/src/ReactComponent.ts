@@ -34,14 +34,16 @@ export function diffProperties(
   let updateQueue: null | Array<[string, any]> = null;
 
   for (const key in oldProps) {
-    if (newProps.hasOwnProperty(key)
-      || !oldProps.hasOwnProperty(key)
-      || key === CHILDREN) {
+    if (!isEvent(key) && (
+      newProps.hasOwnProperty(key) ||
+      !oldProps.hasOwnProperty(key) ||
+      key === CHILDREN
+    )) {
       continue;
     }
 
     if (updateQueue === null) updateQueue = [];
-    updateQueue.push([key, oldProps[key]]);
+    updateQueue.push([key, null]);
   }
 
   for (const key in newProps) {
