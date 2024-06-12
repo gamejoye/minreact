@@ -3,7 +3,6 @@ import { internalKey } from "./ReactDomRoot";
 
 const CHILDREN = 'children';
 
-
 export function getFiberCurrentPropsFromNode(node: Element) {
   return node[internalKey] || null;
 }
@@ -113,53 +112,5 @@ export function updateFiberProps(
   instance[internalKey] = props;
 }
 
-
 export const isEvent = (key: string) => key.startsWith('on');
 export const isProperty = (key: string) => key !== CHILDREN && !isEvent(key);
-export const isGone = (prev: any, next: any) => (key: string) => Object.getOwnPropertyNames(prev).findIndex(ownKey => ownKey === key) === -1
-export const isNew = (prev: any, next: any) => (key: string) => prev[key] !== next[key];
-
-/**
- * 
- * // 移除不存在新props里的事件
-  Object
-    .getOwnPropertyNames(oldProps)
-    .filter(isEvent)
-    .filter(isGone(oldProps, newProps))
-    .forEach(key => {
-      domElement.removeEventListener(
-        key.toLocaleLowerCase().substring(2),
-        oldProps[key]
-      );
-    });
-
-  // 移除不存在新props里的属性
-  Object
-    .getOwnPropertyNames(oldProps)
-    .filter(isProperty)
-    .filter(isGone(oldProps, newProps))
-    .forEach(key => {
-      domElement[key] = '';
-    });
-
-  // 新增属性
-  Object
-    .getOwnPropertyNames(newProps)
-    .filter(isProperty)
-    .filter(isNew(oldProps, newProps))
-    .forEach(key => {
-      domElement[key] = newProps[key];
-    })
-
-  // 新增事件
-  Object
-    .getOwnPropertyNames(newProps)
-    .filter(isEvent)
-    .filter(isNew(oldProps, newProps))
-    .forEach(key => {
-      domElement.addEventListener(
-        key.toLocaleLowerCase().substring(2),
-        newProps[key]
-      );
-    })
- */
