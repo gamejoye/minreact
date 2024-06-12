@@ -42,7 +42,7 @@ function shiftDown(heap: Heap) {
       minChild = rightChild;
     }
 
-    if (compare(heap[k], heap[minChild]) < 0) {
+    if (compare(heap[k], heap[minChild]) <= 0) {
       break;
     }
 
