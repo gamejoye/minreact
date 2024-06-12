@@ -31,9 +31,8 @@
     "webpack-dev-server": "^4.15.1"
   },
   "scripts": {
-    "test": "jest --config ./jest.config.js",
-    "test:watch": "jest --config ./jest.config.js --watch",
-    "test:cov": "jest --config ./jest.config.js --coverage",
+    "test": "jest",
+    "test:cov": "jest --coverage",
     "dev": "webpack serve --open --mode development",
     "build": "rollup -c",
     "generate-barrels": "barrelsby"
