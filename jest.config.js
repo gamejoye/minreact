@@ -12,7 +12,7 @@ module.exports = {
     "^.+\\.(t|j)sx?$": "ts-jest"
   },
   collectCoverageFrom: [
-    "**/*.(t|j)s"
+    "<rootDir>/**/*.(t|j)s"
   ],
   coverageDirectory: "../coverage",
   testEnvironment: "jsdom",
