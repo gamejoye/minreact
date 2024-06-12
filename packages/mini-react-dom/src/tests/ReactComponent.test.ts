@@ -84,7 +84,30 @@ describe('React Component', () => {
     expect(onClick).toHaveBeenCalledTimes(1);
   });
 
-  it('diffProperties work correctly', () => {
+  it('diffProperties should return newProps update', () => {
+    const props = {
+      age: 20,
+    };
+    const fiber = Reconciler.createFiber(Reconciler.ConcurrentTag, props, null);
+    const instance = createInstance(
+      'div',
+      props,
+      fiber
+    );
+    const newProps = {
+      age: 21,
+    };
+    const updateQueue = diffProperties(
+      instance,
+      'div',
+      props,
+      newProps,
+    );
+    expect(updateQueue).not.toBeNull();
+    expect(updateQueue).toMatchObject([['age', 21]]);
+  })
+
+  it('diffProperties should return null when props have not changed', () => {
     const props = {
       age: 20,
     };
