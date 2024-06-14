@@ -1,6 +1,7 @@
 import { sleep } from '@tests/utils';
 import { FiberRoot } from '../ReactInternalTypes';
 import { HostRoot } from '../ReactWorkTag';
+import { getFiberRoot } from '@minreact/minreact-dom';
 
 describe('ReactFiberTreeStructure.test', () => {
   let ReactDom: typeof import('@minreact/minreact-dom');
@@ -25,7 +26,7 @@ describe('ReactFiberTreeStructure.test', () => {
 
     root.render(<App />);
     await sleep(50);
-    const fiberRoot = root['_internalRoot'] as FiberRoot;
+    const fiberRoot = getFiberRoot(root);
     const hostFiberRoot = fiberRoot.current;
     const appFiber = hostFiberRoot.child;
     const divFiber = appFiber.child;

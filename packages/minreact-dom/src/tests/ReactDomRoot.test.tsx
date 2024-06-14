@@ -5,7 +5,7 @@ jest.mock('@minreact/minreact-reconciler', () => {
   };
 });
 
-import { createRoot } from '../ReactDomRoot';
+import { createRoot, getFiberRoot } from '../ReactDomRoot';
 import * as Reconciler from '@minreact/minreact-reconciler';
 
 describe('ReactDomRoot', () => {
@@ -17,10 +17,17 @@ describe('ReactDomRoot', () => {
     updateContainer = jest.spyOn(Reconciler, 'updateContainer');
   });
 
+  it('getFiberRoot', () => {
+    const divElement = document.createElement('div');
+    const domRoom = createRoot(divElement);
+    const root = getFiberRoot(domRoom);
+    expect(root).not.toBeNull();
+  })
+
   it('createRoot', () => {
     const divElement = document.createElement('div');
     const domRoom = createRoot(divElement);
-    const root = domRoom['_internalRoot'] as Reconciler.FiberRoot;
+    const root = getFiberRoot(domRoom);
     expect(root).toBeDefined();
     expect(root.tag).toBe(Reconciler.ConcurrentTag);
     expect(root.containerInfo).toBe(divElement);

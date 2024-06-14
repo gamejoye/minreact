@@ -11,6 +11,13 @@ export function createRoot(containerInfo: Element): ReactDomRoot {
   return new (ReactDomRoot as any)(root);
 }
 
+export function getFiberRoot(
+  root: ReactDomRoot
+): FiberRoot {
+  const fiberRoot = root['_internalRoot'];
+  return fiberRoot === undefined ? null : fiberRoot;
+}
+
 function markContainerAsRoot(hostRoot: Fiber, containerInfo: Element) {
   (containerInfo as any)[internalKey] = hostRoot;
 }
