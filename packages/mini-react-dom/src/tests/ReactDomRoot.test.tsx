@@ -13,7 +13,7 @@ describe('ReactDomRoot', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    jest.restoreAllMocks();
+    jest.resetModules();
     updateContainer = jest.spyOn(Reconciler, 'updateContainer');
   });
 
