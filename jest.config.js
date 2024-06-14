@@ -17,7 +17,7 @@ module.exports = {
   coverageDirectory: "../coverage",
   testEnvironment: "jsdom",
   moduleNameMapper: {
-    "^@mini-react/(.*)$": "<rootDir>/packages/$1",
+    "^@minreact/(.*)$": "<rootDir>/packages/$1",
     "^@tests/(.*)$": "<rootDir>/tests/$1",
   }
 };

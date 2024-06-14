@@ -1,4 +1,4 @@
-import { Fiber, HostText } from "@mini-react/mini-react-reconciler";
+import { Fiber, HostText } from "@minreact/mini-react-reconciler";
 import { internalKey } from "./ReactDomRoot";
 
 const CHILDREN = 'children';

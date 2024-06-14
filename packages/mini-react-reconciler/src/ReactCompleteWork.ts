@@ -1,4 +1,4 @@
-import { createInstance, createTextInstance, diffProperties, isEvent, isProperty, setInitialDOMProperties } from "@mini-react/mini-react-dom";
+import { createInstance, createTextInstance, diffProperties, isEvent, isProperty, setInitialDOMProperties } from "@minreact/mini-react-dom";
 import { Fiber } from "./ReactInternalTypes";
 import { FunctionComponent, HostComponent, HostRoot, HostText } from "./ReactWorkTag";
 import { NoFlags, Update } from "./ReactFiberFlag";

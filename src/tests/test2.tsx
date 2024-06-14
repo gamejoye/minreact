@@ -1,4 +1,4 @@
-import { useState } from "@mini-react/mini-react-reconciler";
+import { useState } from "@minreact/mini-react-reconciler";
 
 export default function App() {
   const [count, setCount] = useState<number>(0);

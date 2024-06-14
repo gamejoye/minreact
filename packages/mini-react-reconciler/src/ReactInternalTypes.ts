@@ -1,4 +1,4 @@
-import { Task } from "@mini-react/mini-react-scheduler";
+import { Task } from "@minreact/mini-react-scheduler";
 import { Flags } from "./ReactFiberFlag";
 import { BasicStateAction, Dispatch } from "./ReactFiberHooks";
 import { Lane, Lanes } from "./ReactFiberLane";

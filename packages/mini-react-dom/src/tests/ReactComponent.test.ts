@@ -12,7 +12,7 @@ describe('React Component', () => {
   let Reconciler;
   beforeEach(() => {
     jest.resetModules();
-    Reconciler = require('@mini-react/mini-react-reconciler');
+    Reconciler = require('@minreact/mini-react-reconciler');
   });
 
   it('should createInstance set internalKey', () => {

@@ -19,7 +19,7 @@ module.exports = {
   resolve: {
     extensions: ['.tsx', '.ts', '.js', '.jsx'],
     alias: {
-      "@mini-react": path.resolve(__dirname, 'packages'),
+      "@minreact": path.resolve(__dirname, 'packages'),
     }
   },
   devtool: 'source-map',

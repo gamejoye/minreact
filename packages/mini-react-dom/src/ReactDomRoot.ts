@@ -1,6 +1,6 @@
 import { ReactElement } from "react";
 import { ReactDomRoot } from "./ReactDomInternalTypes";
-import { ConcurrentTag, Fiber, FiberRoot, createContainer, updateContainer } from "@mini-react/mini-react-reconciler"
+import { ConcurrentTag, Fiber, FiberRoot, createContainer, updateContainer } from "@minreact/mini-react-reconciler"
 
 export const internalKey = '__miniReactContainer';
 

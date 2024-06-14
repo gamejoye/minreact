@@ -5,7 +5,7 @@ import { beginWork } from "./ReactFiberBeginWork";
 import { completeWork } from "./ReactCompleteWork";
 import { commitMutationEffects, commitPassiveMountEffects, commitPassiveUnmountEffects } from "./ReactCommitWork";
 import { HostRoot } from "./ReactWorkTag";
-import { scheduleCallback, shouldYieldToHost } from "@mini-react/mini-react-scheduler";
+import { scheduleCallback, shouldYieldToHost } from "@minreact/mini-react-scheduler";
 import { NoFlags, Passive, PassiveMask } from "./ReactFiberFlag";
 import { ReactCurrentBatchConfig } from "./ReactBatchConfig";
 import { DefaultEventPriority, DiscreteEventPriority, getCurrentUpdatePriority } from "./ReactEventPriorities";
