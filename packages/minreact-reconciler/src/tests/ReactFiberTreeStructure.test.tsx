@@ -2,7 +2,7 @@ import { sleep } from '@tests/utils';
 import { FiberRoot } from '../ReactInternalTypes';
 import { HostRoot } from '../ReactWorkTag';
 
-describe('ReactFiberBeginWork', () => {
+describe('ReactFiberTreeStructure.test', () => {
   let ReactDom: typeof import('@minreact/minreact-dom');
   let Reconciler: typeof import('@minreact/minreact-reconciler');
   beforeEach(async () => {
@@ -11,7 +11,7 @@ describe('ReactFiberBeginWork', () => {
     Reconciler = await import('@minreact/minreact-reconciler');
   });
 
-  it('beginWork is called in the desired order', async () => {
+  it('fiberTreeShouldBeCorrectAfterCommit', async () => {
     const rootElement = document.createElement('div');
     const root = ReactDom.createRoot(rootElement);
     function App() {
