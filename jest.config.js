@@ -1,22 +1,23 @@
 module.exports = {
-  setupFilesAfterEnv: ['<rootDir>/jest/jest.setup.ts'],
+  setupFilesAfterEnv: ['<rootDir>/tests/jest.setup.ts'],
   moduleFileExtensions: [
     "js",
     "json",
     "ts",
     "tsx"
   ],
-  rootDir: "packages",
+  rootDir: "./",
   testRegex: ".*\\.test\\.tsx?$",
   transform: {
     "^.+\\.(t|j)sx?$": "ts-jest"
   },
   collectCoverageFrom: [
-    "<rootDir>/**/*.(t|j)s"
+    "<rootDir>/packages/**/*.(t|j)s"
   ],
   coverageDirectory: "../coverage",
   testEnvironment: "jsdom",
   moduleNameMapper: {
-    "^@mini-react/(.*)$": "<rootDir>/$1"
+    "^@mini-react/(.*)$": "<rootDir>/packages/$1",
+    "^@tests/(.*)$": "<rootDir>/tests/$1",
   }
 };

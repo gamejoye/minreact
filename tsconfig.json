@@ -5,6 +5,9 @@
       "@mini-react/*": [
         "packages/*"
       ],
+      "@tests/*": [
+        "tests/*"
+      ],
     },
     "target": "es2016",
     "jsx": "react-jsx",
