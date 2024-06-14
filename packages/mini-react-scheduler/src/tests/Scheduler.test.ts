@@ -1,17 +1,10 @@
+import { sleep } from "@tests/utils";
 import { scheduleCallback } from "../Scheduler";
 
 describe('Scheduler', () => {
   beforeEach(() => {
     jest.resetModules();
   });
-
-  function sleep(time: number) {
-    return new Promise<void>((resolve) => {
-      setTimeout(() => {
-        resolve();
-      }, time);
-    })
-  }
 
   function createJestFnWithReturnTimes(maxCallbackReturns: number) {
     let currentCallbackReturns = 0;
