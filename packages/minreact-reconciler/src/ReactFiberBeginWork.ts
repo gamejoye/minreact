@@ -16,7 +16,7 @@ function updateHostRoot(
   if (currentQueue === null) {
     throw new Error(`
       HostFiberRoot的updateQueue不应该为null
-      mini-react bug
+      minreact bug
     `)
   }
   cloneUpdateQueue(current, workInProgress);
@@ -25,7 +25,7 @@ function updateHostRoot(
   if (first === null) {
     throw new Error(`
       这里应该有需要的更新
-      可能是mini-react的bug
+      可能是minreact的bug
     `)
   }
   const nextChildren = first.payload.element;
@@ -56,7 +56,7 @@ function updateFunctionComponent(
   if (typeof Component !== 'function') {
     throw new Error(`
       Component应该是一个函数
-      mini-react bug
+      minreact bug
     `)
   }
   const props = workInProgress.pendingProps;

@@ -1,4 +1,4 @@
-import { updateDOMProperties, updateFiberProps } from "@minreact/mini-react-dom";
+import { updateDOMProperties, updateFiberProps } from "@minreact/minreact-dom";
 import { ChildDeletion, Mutation, NoFlags, PassiveMask, Placement, PlacementAndUpdate, Update } from "./ReactFiberFlag";
 import { Fiber, FiberRoot } from "./ReactInternalTypes";
 import { FunctionComponent, HostComponent, HostRoot, HostText } from "./ReactWorkTag";
@@ -443,7 +443,7 @@ function getHostParent(fiber: Fiber): Fiber {
 
   throw new Error(`
     ${fiber} 应该有一个hostParent但是没有找到
-    mini-react bug
+    minreact bug
   `)
 }
 

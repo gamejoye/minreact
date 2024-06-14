@@ -66,7 +66,7 @@ export function renderWithHooks(
   if (typeof Component !== 'function') {
     throw new Error(`
       Component应该是一个函数
-      mini-react bug
+      minreact bug
     `)
   }
 

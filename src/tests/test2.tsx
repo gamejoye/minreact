@@ -1,4 +1,4 @@
-import { useState } from "@minreact/mini-react-reconciler";
+import { useState } from "@minreact/minreact-reconciler";
 
 export default function App() {
   const [count, setCount] = useState<number>(0);
@@ -11,9 +11,9 @@ export default function App() {
       <h1>count: {count}</h1>
       <button onClick={addCount}>add</button>
       <h1>
-        hello mini-react
+        hello minreact
       </h1>
-      <cite>this is mini-react project</cite>
+      <cite>this is minreact project</cite>
       <div className="content">
         今天是11.25 星期六 晚上22.35
         nice to meet you

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "@minreact/mini-react-reconciler";
+import { useEffect, useState } from "@minreact/minreact-reconciler";
 
 export default function App() {
   const [count, setCount] = useState(0);

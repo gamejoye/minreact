@@ -5,7 +5,7 @@ import { beginWork } from "./ReactFiberBeginWork";
 import { completeWork } from "./ReactCompleteWork";
 import { commitMutationEffects, commitPassiveMountEffects, commitPassiveUnmountEffects } from "./ReactCommitWork";
 import { HostRoot } from "./ReactWorkTag";
-import { scheduleCallback, shouldYieldToHost } from "@minreact/mini-react-scheduler";
+import { scheduleCallback, shouldYieldToHost } from "@minreact/minreact-scheduler";
 import { NoFlags, Passive, PassiveMask } from "./ReactFiberFlag";
 import { ReactCurrentBatchConfig } from "./ReactBatchConfig";
 import { DefaultEventPriority, DiscreteEventPriority, getCurrentUpdatePriority } from "./ReactEventPriorities";
@@ -210,7 +210,7 @@ export function commitRoot(root: FiberRoot) {
 
   /**
    * 这里react还有一个处理beforeMutations的步骤
-   * 这里mini-react并没有实现
+   * 这里minreact并没有实现
    * 因为beforeMutations的是处理带有Snapshot的， 只有class组件才会带有这个flag
    */
 

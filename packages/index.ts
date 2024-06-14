@@ -1,3 +1,3 @@
-export * from "./mini-react-dom"
-export * from "./mini-react-reconciler"
-export * from "./mini-react-scheduler"
+export * from "./minreact-dom"
+export * from "./minreact-reconciler"
+export * from "./minreact-scheduler"

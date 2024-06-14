@@ -1,8 +1,8 @@
 import { ReactElement } from "react";
 import { ReactDomRoot } from "./ReactDomInternalTypes";
-import { ConcurrentTag, Fiber, FiberRoot, createContainer, updateContainer } from "@minreact/mini-react-reconciler"
+import { ConcurrentTag, Fiber, FiberRoot, createContainer, updateContainer } from "@minreact/minreact-reconciler"
 
-export const internalKey = '__miniReactContainer';
+export const internalKey = '__minReactContainer';
 
 export function createRoot(containerInfo: Element): ReactDomRoot {
   const root = createContainer(containerInfo, ConcurrentTag);

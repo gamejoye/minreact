@@ -3,12 +3,12 @@ import { FiberRoot } from '../ReactInternalTypes';
 import { HostRoot } from '../ReactWorkTag';
 
 describe('ReactFiberBeginWork', () => {
-  let ReactDom: typeof import('@minreact/mini-react-dom');
-  let Reconciler: typeof import('@minreact/mini-react-reconciler');
+  let ReactDom: typeof import('@minreact/minreact-dom');
+  let Reconciler: typeof import('@minreact/minreact-reconciler');
   beforeEach(async () => {
     jest.resetModules();
-    ReactDom = await import('@minreact/mini-react-dom');
-    Reconciler = await import('@minreact/mini-react-reconciler');
+    ReactDom = await import('@minreact/minreact-dom');
+    Reconciler = await import('@minreact/minreact-reconciler');
   });
 
   it('beginWork is called in the desired order', async () => {

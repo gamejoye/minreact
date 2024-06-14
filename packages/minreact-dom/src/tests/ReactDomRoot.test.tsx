@@ -1,12 +1,12 @@
-jest.mock('@minreact/mini-react-reconciler', () => {
+jest.mock('@minreact/minreact-reconciler', () => {
   return {
-    ...jest.requireActual('@minreact/mini-react-reconciler'),
+    ...jest.requireActual('@minreact/minreact-reconciler'),
     __esModule: true,
   };
 });
 
 import { createRoot } from '../ReactDomRoot';
-import * as Reconciler from '@minreact/mini-react-reconciler';
+import * as Reconciler from '@minreact/minreact-reconciler';
 
 describe('ReactDomRoot', () => {
   let updateContainer;

@@ -1,4 +1,4 @@
-import { createRoot } from "@minreact/mini-react-dom";
+import { createRoot } from "@minreact/minreact-dom";
 import App from "./tests/test1";
 
 const root = createRoot(document.getElementById('root') as HTMLElement);
